@@ -30,12 +30,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $q_empresa=$_POST['empresa'];//nombre de la empresa
     $q_nit=$_POST['nit'];//nit de la empresa que esta en la factura
     $q_direccionemp=$_POST['direccionemp'];//direccion de la empresa o sucursal donde sucedio
+    $q_zona=$_POST['zona'];
     $q_telefonoemp=$_POST['telefonoemp'];//telefono de la empresa si loo tubiera
     $q_correoemp=$_POST['correoemp'];//correo de la empresa si lo tubiera
    //$pnombre = $_POST['nombre'];
     if (isset($_POST['opcion'])){
         echo alta_queja($q_tipoqueja,$q_departamento,$q_municipio,$q_estado,
-        $q_nombre,$q_cui,$q_telefono,$q_celular,$q_correo,$q_direccion,$q_empresa,$q_nit,$q_direccionemp,$q_telefonoemp,$q_correoemp);
+        $q_nombre,$q_cui,$q_telefono,$q_celular,$q_correo,$q_direccion,$q_empresa,$q_nit,$q_direccionemp,$q_zona,$q_telefonoemp,$q_correoemp);
        
     }else{
         header("HTTP/1.1 400 opcion incorrecta");
