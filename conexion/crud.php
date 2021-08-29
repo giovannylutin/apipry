@@ -13,9 +13,28 @@ function listar_registros(){
 	return json_encode($sql->fetchAll());
 	exit;		
 }
+function listar_departamentos(){
+    $pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT * FROM tb_departamento");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	header("HTTP/1.1 200 hay datos");
+	return json_encode($sql->fetchAll());
+	exit;		
+}
+function listar_municipio($vardep){
+	$pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT * FROM tb_municipio WHERE ID_MUN=:id");
+	$sql->bindValue(':id',$vardep);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	header("HTTP/1.1 200 hay datos");
+	return json_encode($sql->fetchAll());
+	exit;	
+}
 function listar_registro_specifico($var){
     $pdo = new Conexion();
-    $sql = $pdo->prepare("SELECT * FROM tb_quejas WHERE ID_QUEJA=:id");
+    $sql = $pdo->prepare("SELECT * FROM tb_quejas WHERE QUEJA_CONSULTA=:id");
 	$sql->bindValue(':id',$var);
 	$sql->execute();
 	$sql->setFetchMode(PDO::FETCH_ASSOC);
@@ -36,7 +55,8 @@ function alta_queja($var1,$var2,$var3,$var4,$var5,$var6,$var7,$var8,$var9,$var10
 	$pdo = new Conexion();
 	$tipoqueja='Queja no anonima';
 	$tkn_consulta=crear_token($var1);
-	
+	$stringhed = 'HTTP/1.1 200 '.$tkn_consulta;
+
 	if($var1==1){
 		$tipoqueja='Queja anonima';
 	}
@@ -64,7 +84,7 @@ function alta_queja($var1,$var2,$var3,$var4,$var5,$var6,$var7,$var8,$var9,$var10
 	$row = $pdo->query("SELECT @result AS resultadoobtenido")->fetch(PDO::FETCH_ASSOC);
 
 	if($row){
-		header("HTTP/1.1 200 OK");
+		header($stringhed);
 		return $row !== false ? $row['resultadoobtenido'] : null;
 		exit;
 	}else{
