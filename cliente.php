@@ -22,7 +22,7 @@ if($method== 'GET'){
     }
 }if($method == 'POST'){
     $credentials = json_decode( file_get_contents( 'php://input' ) );
-    $q_tipoqueja = $credentials->opcion2;
+    $q_tipoqueja = $credentials->opcion;
     $q_departamento = $credentials->departamento;
     $q_municipio = $credentials->municipio;
     $q_estado = $credentials->estado;
