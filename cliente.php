@@ -32,17 +32,26 @@ if($method== 'GET'){
     $q_celular = $credentials->celular;
     $q_correo = $credentials->correo;
     $q_direccion = $credentials->direccion;
-    $q_empresa = $credentials->empresa;
+    // $q_empresa = $credentials->empresa;
     $q_nit = $credentials->nit;
     $q_direccionemp = $credentials->direccionemp;
     $q_zona = $credentials->zona;
     $q_telefonoemp = $credentials->telefonoemp;
-    $q_correoemp = $credentials->coreoemp;
+    $q_correoemp = $credentials->correoemp;
+
+    $q_facturaemp = $credentials->factemp;
+    $q_fechaemicion = $credentials->facfechatemp;
+    $q_quejaempresa = $credentials->quejaemp;
+    $q_requiereemp = $credentials->requiereemp;
+
+
      
     if (isset($q_tipoqueja)){
         // header("HTTP/1.1 200 me llego la opcion");
            alta_queja($q_tipoqueja,$q_departamento,$q_municipio,$q_estado,
-    $q_nombre,$q_cui,$q_telefono,$q_celular,$q_correo,$q_direccion,$q_empresa,$q_nit,$q_direccionemp,$q_zona,$q_telefonoemp,$q_correoemp);
+    $q_nombre,$q_cui,$q_telefono,$q_celular,$q_correo,$q_direccion
+    ,$q_nit,$q_direccionemp,$q_zona,$q_telefonoemp,$q_correoemp,
+    $q_facturaemp,$q_fechaemicion,$q_quejaempresa,$q_requiereemp);
 
         }else{
             header("HTTP/1.1 400 opcion incorrecta");
