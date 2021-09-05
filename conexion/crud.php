@@ -34,7 +34,8 @@ function listar_municipio($vardep){
 }
 function listar_registro_specifico($var){
     $pdo = new Conexion();
-    $sql = $pdo->prepare("SELECT * FROM tb_quejas WHERE QUEJA_CONSULTA=:id");
+    $sql = $pdo->prepare("SELECT ESTADO,TIPO,QUEJA_CONSULTA,tb_quejas.FECHA_ALTA,EMPRESA,NIT,DIRECCION,ZONA,TELEFONO,CORREO 
+	FROM tb_quejas join tb_quejas_proveedor on tb_quejas.id_queja = tb_quejas_proveedor.id_queja WHERE QUEJA_CONSULTA=:id");
 	$sql->bindValue(':id',$var);
 	$sql->execute();
 	$sql->setFetchMode(PDO::FETCH_ASSOC);
