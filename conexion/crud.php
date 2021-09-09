@@ -43,6 +43,34 @@ function listar_registro_specifico($var){
 	return json_encode($sql->fetchAll());
 	exit;	
 }
+function listar_region(){
+	$pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT ID_REGION,REGION FROM tb_region");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	header("HTTP/1.1 200 hay datos");
+	return json_encode($sql->fetchAll());
+	exit;
+}
+function listar_empresa_nombre(){
+	$pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT NIT,EMPRESA FROM tb_quejas_empresas");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	header("HTTP/1.1 200 hay datos");
+	return json_encode($sql->fetchAll());
+	exit;
+}
+function listar_departamento_especifico($vardep){
+	$pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT ID_DEP,DEPARTAMENTO FROM tb_departamento WHERE ID_REGION=:id");
+	$sql->bindValue(':id',$vardep);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	header("HTTP/1.1 200 hay datos");
+	return json_encode($sql->fetchAll());
+	exit;	
+}
 function crear_token($biene){
 	$tipoop='A';
 	if($biene==2){
