@@ -20,6 +20,8 @@ if($method== 'GET'){
             echo listar_municipio($idsolicita);
         }if($irop==3){
              echo listar_empresa_nombre();
+        }if ($irop==4){
+            echo filtrar_empresa();
         }
     }
     else{

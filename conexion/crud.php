@@ -71,6 +71,18 @@ function listar_departamento_especifico($vardep){
 	return json_encode($sql->fetchAll());
 	exit;	
 }
+function filtrar_empresa(){
+
+	// SELECT REGION,DEPARTAMENTO,EMPRESA,DIRECCION FROM `tb_region` JOIN `tb_departamento`on `tb_region`.`ID_REGION`=`tb_departamento`.`ID_REGION`join `tb_quejas`on `tb_departamento`.`ID_DEP`=`tb_quejas`.`ID_DEP` JOIN `tb_quejas_proveedor`on `tb_quejas`.`ID_QUEJA`=`tb_quejas_proveedor`.`ID_QUEJA`JOIN `tb_quejas_empresas`on `tb_quejas_proveedor`.`NIT`= `tb_quejas_empresas`.`NIT` WHERE (`tb_quejas`.`FECHA_ALTA`) BETWEEN '2021-09-01' AND '2021-09-20'
+	$pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT REGION,DEPARTAMENTO,EMPRESA,DIRECCION FROM tb_region JOIN tb_departamento on tb_region.ID_REGION=tb_departamento.ID_REGION join tb_quejas on tb_departamento.ID_DEP=tb_quejas.ID_DEP JOIN tb_quejas_proveedor on tb_quejas.ID_QUEJA=tb_quejas_proveedor.ID_QUEJA JOIN tb_quejas_empresas on tb_quejas_proveedor.NIT= tb_quejas_empresas.NIT WHERE (tb_quejas.FECHA_ALTA) BETWEEN '2021-09-01' AND '2021-09-20'");
+	// $sql->bindValue(':id',$vardep);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	header("HTTP/1.1 200 hay datos");
+	return json_encode($sql->fetchAll());
+	exit;	
+}
 function crear_token($biene){
 	$tipoop='A';
 	if($biene==2){

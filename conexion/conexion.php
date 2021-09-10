@@ -2,8 +2,8 @@
 	class Conexion extends PDO
 	{
 		private $hostBd = 'localhost';
-		private $nombreBd = 'agentepr_Quejas_Diaco';
-		private $usuarioBd = 'agentepr';
+		private $nombreBd = 'prueba';
+		private $usuarioBd = 'root';
 		private $passwordBd = '';
 		
 		public function __construct()
