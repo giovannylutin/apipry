@@ -13,6 +13,8 @@ if($method== 'GET'){
     if(isset($_GET['id'])){
         $irop=$_GET['verop'];
         $idsolicita=$_GET['id'];
+        $fsol=$_GET['fechaini'];
+        $fsolf=$_GET['fechafin'];
         if($irop==1){
             // $idsolicita=$_GET['id'];
             echo listar_departamento_especifico($idsolicita);
@@ -21,7 +23,7 @@ if($method== 'GET'){
         }if($irop==3){
              echo listar_empresa_nombre();
         }if ($irop==4){
-            echo filtrar_empresa();
+            echo filtrar_empresa($idsolicita,$fsol,$fsolf);
         }
     }
     else{

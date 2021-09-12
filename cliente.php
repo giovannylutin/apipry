@@ -20,7 +20,8 @@ if($method== 'GET'){
     else{
     echo listar_registros();
     }
-}if($method == 'POST'){
+}
+if($method == 'POST'){
     $credentials = json_decode( file_get_contents( 'php://input' ) );
     $q_tipoqueja = $credentials->opcion;
     $q_departamento = $credentials->departamento;

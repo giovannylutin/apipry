@@ -3,7 +3,29 @@
 include 'conexion.php';
 	
 // $pdo = new Conexion();
+function ingreso_reportes($puser,$ppass){
+ $pencriptado= encriptacion($ppass);
 
+	$pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT ROL,ESTADO,TOK FROM tb_diaco_usuarios WHERE USUARIO=:usuario AND PASS=:pass");
+	$sql->bindValue(':usuario',$puser,PDO::PARAM_STR);
+	$sql->bindValue(':pass',$pencriptado,PDO::PARAM_STR);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	$count=$sql->rowCount();
+	if ($count) {
+		header("HTTP/1.1 200 hay datos");
+		return json_encode($sql->fetchAll());
+		exit;	
+	}else{
+		// header("HTTP/1.1 400 fail");
+		return json_encode($sql->fetchAll());
+		exit;
+	}
+}
+function encriptacion($valorenc){
+	return sha1($valorenc);
+}
 function listar_registros(){
     $pdo = new Conexion();
     $sql = $pdo->prepare("SELECT * FROM tb_quejas");
@@ -34,8 +56,7 @@ function listar_municipio($vardep){
 }
 function listar_registro_specifico($var){
     $pdo = new Conexion();
-    $sql = $pdo->prepare("SELECT ESTADO,TIPO,QUEJA_CONSULTA,tb_quejas.FECHA_ALTA,NIT,DIRECCION,ZONA,TELEFONO,CORREO 
-	FROM tb_quejas join tb_quejas_proveedor on tb_quejas.id_queja = tb_quejas_proveedor.id_queja WHERE QUEJA_CONSULTA=:id");
+    $sql = $pdo->prepare("SELECT tb_departamento.DEPARTAMENTO,tb_municipio.MUNICIPIO,EMPRESA,ESTADO,TIPO,QUEJA_CONSULTA,tb_quejas.FECHA_ALTA,tb_quejas_proveedor.NIT,DIRECCION,ZONA,TELEFONO,CORREO,NOFACTURA,QUEJA FROM tb_quejas JOIN tb_municipio ON tb_quejas.ID_MUN=tb_municipio.ID_MUN JOIN tb_departamento on tb_departamento.ID_DEP=tb_quejas.ID_DEP join tb_quejas_detalle on tb_quejas_detalle.ID_QUEJA=tb_quejas.ID_QUEJA join tb_quejas_proveedor on tb_quejas.id_queja = tb_quejas_proveedor.id_queja JOIN tb_quejas_empresas ON tb_quejas_empresas.NIT=tb_quejas_proveedor.NIT WHERE QUEJA_CONSULTA=:id");
 	$sql->bindValue(':id',$var);
 	$sql->execute();
 	$sql->setFetchMode(PDO::FETCH_ASSOC);
@@ -71,17 +92,29 @@ function listar_departamento_especifico($vardep){
 	return json_encode($sql->fetchAll());
 	exit;	
 }
-function filtrar_empresa(){
-
+function filtrar_empresa($varempsolicita,$fechainibuscar,$fsolf){
+if ($fechainibuscar == "" && $fsolf=="") {
+	$fechainibuscar="2021-01-01";
+	$fsolf="2021-12-31";
+}elseif($fechainibuscar != "" && $fsolf == ""){
+	// $fechainibuscar="2021-01-01";
+	$fsolf="2021-12-31";
+}elseif($fechainibuscar == "" && $fsolf != ""){
+	$fechainibuscar="2021-01-01";
+}
 	// SELECT REGION,DEPARTAMENTO,EMPRESA,DIRECCION FROM `tb_region` JOIN `tb_departamento`on `tb_region`.`ID_REGION`=`tb_departamento`.`ID_REGION`join `tb_quejas`on `tb_departamento`.`ID_DEP`=`tb_quejas`.`ID_DEP` JOIN `tb_quejas_proveedor`on `tb_quejas`.`ID_QUEJA`=`tb_quejas_proveedor`.`ID_QUEJA`JOIN `tb_quejas_empresas`on `tb_quejas_proveedor`.`NIT`= `tb_quejas_empresas`.`NIT` WHERE (`tb_quejas`.`FECHA_ALTA`) BETWEEN '2021-09-01' AND '2021-09-20'
 	$pdo = new Conexion();
-    $sql = $pdo->prepare("SELECT REGION,DEPARTAMENTO,EMPRESA,DIRECCION FROM tb_region JOIN tb_departamento on tb_region.ID_REGION=tb_departamento.ID_REGION join tb_quejas on tb_departamento.ID_DEP=tb_quejas.ID_DEP JOIN tb_quejas_proveedor on tb_quejas.ID_QUEJA=tb_quejas_proveedor.ID_QUEJA JOIN tb_quejas_empresas on tb_quejas_proveedor.NIT= tb_quejas_empresas.NIT WHERE (tb_quejas.FECHA_ALTA) BETWEEN '2021-09-01' AND '2021-09-20'");
-	// $sql->bindValue(':id',$vardep);
+    $sql = $pdo->prepare("SELECT tb_region.ID_REGION,REGION,tb_departamento.ID_DEP,DEPARTAMENTO,tb_municipio.ID_MUN,MUNICIPIO,EMPRESA,tb_quejas.FECHA_ALTA FROM tb_region JOIN tb_departamento ON tb_departamento.ID_REGION=tb_region.ID_REGION JOIN tb_municipio ON tb_municipio.ID_DEP=tb_departamento.ID_DEP JOIN tb_quejas ON tb_quejas.ID_MUN=tb_municipio.ID_MUN JOIN tb_quejas_proveedor ON tb_quejas_proveedor.ID_QUEJA=tb_quejas.ID_QUEJA JOIN tb_quejas_empresas on tb_quejas_empresas.NIT=tb_quejas_proveedor.NIT WHERE tb_quejas_proveedor.NIT=:id AND (tb_quejas.FECHA_ALTA) BETWEEN :fechabuscarinicio AND :fechabuscarinfin");
+	 $sql->bindValue(':id',$varempsolicita);
+	 $sql->bindValue(':fechabuscarinicio',$fechainibuscar);
+	 $sql->bindValue(':fechabuscarinfin',$fsolf);
 	$sql->execute();
 	$sql->setFetchMode(PDO::FETCH_ASSOC);
 	header("HTTP/1.1 200 hay datos");
 	return json_encode($sql->fetchAll());
 	exit;	
+}
+function reporteregionestotales(){
 }
 function crear_token($biene){
 	$tipoop='A';
