@@ -3,6 +3,34 @@
 include 'conexion.php';
 	
 // $pdo = new Conexion();
+function listar_resumendash(){
+	header("HTTP/1.1 200 OK");
+	$collectionresumen=array( 'regionresumen'=> array(listarresumeRegion()),'departamentoresumen'=>array(listarresumendepartamento()),'muncipioresumen'=>array(listarresumenmunicipio()));
+	return json_encode($collectionresumen);
+	exit;
+}
+function listarresumeRegion(){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("SELECT COUNT(*) total,REGION FROM tb_quejas join tb_departamento on tb_departamento.ID_DEP=tb_quejas.ID_DEP JOIN tb_region ON tb_region.ID_REGION=tb_departamento.ID_REGION GROUP BY tb_quejas.ID_DEP");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	return $sql->fetchAll();
+
+}
+function listarresumendepartamento(){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("SELECT COUNT(*) total,DEPARTAMENTO FROM tb_quejas join tb_departamento on tb_departamento.ID_DEP=tb_quejas.ID_DEP GROUP BY tb_quejas.ID_DEP");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	return $sql->fetchAll();
+}
+function listarresumenmunicipio(){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("SELECT COUNT(*) total,MUNICIPIO FROM tb_quejas join tb_municipio on tb_municipio.ID_MUN=tb_quejas.ID_MUN GROUP BY tb_quejas.ID_MUN");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	return $sql->fetchAll();
+}
 function ingreso_reportes($puser,$ppass){
  $pencriptado= encriptacion($ppass);
 
@@ -14,11 +42,11 @@ function ingreso_reportes($puser,$ppass){
 	$sql->setFetchMode(PDO::FETCH_ASSOC);
 	$count=$sql->rowCount();
 	if ($count) {
-		header("HTTP/1.1 200 hay datos");
+		header("HTTP/1.1 200 hay Usuario encontrado");
 		return json_encode($sql->fetchAll());
 		exit;	
 	}else{
-		// header("HTTP/1.1 400 fail");
+		 header("HTTP/1.1 200 Usuario no encontrado");
 		return json_encode($sql->fetchAll());
 		exit;
 	}
@@ -114,7 +142,20 @@ if ($fechainibuscar == "" && $fsolf=="") {
 	return json_encode($sql->fetchAll());
 	exit;	
 }
-function reporteregionestotales(){
+function dashresumen(){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("CALL Proc_dash_totales (@totaldia,@totalmes,@totaldiaantes,@totalanual)");
+	$sql->execute();
+	$sql->closeCursor();
+	$row = $pdo->query("SELECT @totaldia AS Tdia, @totalmes AS Tmes, @totaldiaantes AS Tdiaantes, @totalanual AS Tanual;")->fetch(PDO::FETCH_ASSOC);
+	$diatotals=$row['Tdia'];
+	$mestotals=$row['Tmes'];
+	$diaantess=$row['Tdiaantes'];
+	$anuals=$row['Tanual'];
+	$result= array("diatotal"=>$diatotals,"mestotal"=>$mestotals,"diaantes"=>$diaantess,"anual"=>$anuals);
+	header("HTTP/1.1 200 OK");
+	return json_encode($result);
+	exit;
 }
 function crear_token($biene){
 	$tipoop='A';
@@ -166,9 +207,16 @@ $var11,$var12,$var13,$var14,$var15,$var16,$var17,$var18,$var19){
 	$row = $pdo->query("SELECT @result AS resultadoobtenido")->fetch(PDO::FETCH_ASSOC);
 
 	if($row){
-		header($stringhed);
-		return $row !== false ? $row['resultadoobtenido'] : null;
-		exit;
+		if ($row['resultadoobtenido']!=0) {
+			header($stringhed);
+			return $row !== false ? $row['resultadoobtenido'] : null;
+			exit;
+		}else{
+			header("HTTP/1.1 200 fail");
+			return "hubo un pequeño problema";
+			exit;
+		}
+
 	}else{
 		header("HTTP/1.1 400 Bad Request");
 		return "hubo un pequeño problema";

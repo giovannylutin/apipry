@@ -8,17 +8,27 @@ $method = $_SERVER['REQUEST_METHOD'];
 include 'conexion/crud.php';
 if($method== 'GET'){
    
-    $usuario=$_GET['user'];
-    $pass=$_GET['pass'];
+    echo dashresumen();
+    // $usuario=$_GET['user'];
+    // $pass=$_GET['pass'];
 
-    if ($usuario !="" && $pass !="") {
-        echo ingreso_reportes($usuario,$pass);
-    }else{
-        header("HTTP/1.1 400 oops");
-    }
+    // if ($usuario !="" && $pass !="") {
+    //     echo ingreso_reportes($usuario,$pass);
+    // }else{
+    //     header("HTTP/1.1 400 oops");
+    // }
 
 }
-
+if($method== 'POST'){
+    $credentials = json_decode( file_get_contents( 'php://input' ) );
+    $usuarior=$credentials->usuariop;
+    $contrasena=$credentials->passp;
+    if ($usuarior !="" && $contrasena !="") {
+        echo ingreso_reportes($usuarior,$contrasena);
+    }else{
+        header("HTTP/1.1 400 oops");
+    }  
+}
 
 
 // $str = '@Gio2019';
