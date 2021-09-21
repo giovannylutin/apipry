@@ -3,6 +3,74 @@
 include 'conexion.php';
 	
 // $pdo = new Conexion();
+function ubicarresumen(){
+	$arraydevuelve= array(0,0,0,0,0,0,0,0);
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("
+	select COUNT(*),dayOFWEEK(FECHA_ALTA),FECHA_ALTA from tb_quejas where WEEKOFYEAR(FECHA_ALTA)=WEEKOFYEAR(now()) GROUP BY DAYOFWEEK(FECHA_ALTA)");
+	$sql->execute();
+	$arr = $sql->fetchAll(PDO::FETCH_ASSOC);
+	// $sql->setFetchMode(PDO::FETCH_ASSOC);
+	$count=$sql->rowCount();
+
+ foreach ($arr as $row) {
+	 if($row['dayOFWEEK(FECHA_ALTA)']==1){
+		 echo "Domingo,";
+		 $reemplazosd = array(0 => $row['COUNT(*)']);
+		 $cesta = array_replace($arraydevuelve,$reemplazosd);
+		
+	 }
+	 if($row['dayOFWEEK(FECHA_ALTA)']==2){
+		echo "Lunes";
+		$reemplazos2=array(1 => $row['COUNT(*)']);
+		$cesta = array_replace($arraydevuelve,$reemplazos2);
+	}
+	if($row['dayOFWEEK(FECHA_ALTA)']==3){
+		echo "Martes";
+		$reemplazos2=array(2 => $row['COUNT(*)']);
+		$cesta = array_replace($arraydevuelve,$reemplazos2);
+		
+	}
+	if($row['dayOFWEEK(FECHA_ALTA)']==4){
+		echo "Miercoles";
+		$reemplazosm=array(3 => $row['COUNT(*)']);
+		$cesta = array_replace($arraydevuelve,$reemplazosm);
+		
+	}
+	if($row['dayOFWEEK(FECHA_ALTA)']==5){
+		echo "Jueves";
+		$reemplazos2=array(4 => $row['COUNT(*)']);
+		$cesta = array_replace($arraydevuelve,$reemplazos2);
+		
+	}
+	if($row['dayOFWEEK(FECHA_ALTA)']==6){
+		echo "Viernes";
+		array(5 => $row['COUNT(*)']);
+		echo $arraydevuelve[5];
+	}
+	if($row['dayOFWEEK(FECHA_ALTA)']==7){
+		echo "sabado";
+		array(6 => $row['COUNT(*)']);
+		echo $arraydevuelve[6];
+	}
+	// echo $row['COUNT(*)'].",";
+    // echo $row['dayOFWEEK(FECHA_ALTA)'].",";
+	// echo $row['FECHA_ALTA'];
+	// echo "</br>";
+	print_r($cesta);
+ }
+ print_r($cesta);
+//  $cesta = array_replace($arraydevuelve,$reemplazos2);
+ 
+		// 	$i = 0;
+		// while ($i < $count):
+		// 	echo $sql->fetchAll();
+		// 	$i++;
+		// endwhile;
+	// return $count;
+	// return json_encode($sql->fetchAll());
+	
+}
 function listar_resumendash(){
 	header("HTTP/1.1 200 OK");
 	$collectionresumen=array( 'regionresumen'=> array(listarresumeRegion()),'departamentoresumen'=>array(listarresumendepartamento()),'muncipioresumen'=>array(listarresumenmunicipio()));
@@ -166,13 +234,37 @@ function crear_token($biene){
 	$caracteres = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	return $tipoop.substr(str_shuffle($caracteres),0,5).date("m").date("y");
 }
+function consultaremp($nitcons,$empcons){
+	// $sqlinsert="INSERT INTO `tb_quejas_empresas`(`NIT`, `EMPRESA`, `FECHA__ALTA`, `FECHA_ACTUALIZADO`) VALUES ([value-1],[value-2],[value-3],[value-4])";
+	$pdo = new Conexion();
+    $sql = $pdo->prepare("SELECT NIT FROM tb_quejas_empresas WHERE NIT=:id");
+	$sql->bindValue(':id',$nitcons);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	$count=$sql->rowCount();
+	// $sql->setFetchMode(PDO::FETCH_ASSOC);
+	if ($count==0) {
+	$sqla = $pdo->prepare("INSERT INTO tb_quejas_empresas (NIT, EMPRESA, FECHA__ALTA, FECHA_ACTUALIZADO) VALUES (:valnit,:valemp,now(),now())");
+	$sqla->bindValue(':valnit',$nitcons);
+	$sqla->bindValue(':valemp',$empcons);
+	$sqla->execute();
+		return TRUE;
+		exit;	
+	}else{
+		return FALSE;
+		exit;
+	}
+}
 function alta_queja($var1,$var2,$var3,$var4,$var5,$var6,$var7,$var8,$var9,$var10,
 $var11,$var12,$var13,$var14,$var15,$var16,$var17,$var18,$var19){
 	$pdo = new Conexion();
+	// $carga=consultaremp($var11,$empn);
 	$valorhjj="2021-08-09";
 	$tipoqueja='Queja no anonima';
 	$tkn_consulta=crear_token($var1);
 	$stringhed = 'HTTP/1.1 200 '.$tkn_consulta;
+	// $stringhed = 'HTTP/1.1 200 '.$carga;
+	
 
 	if($var1==1){
 		$tipoqueja='Queja anonima';

@@ -9,4 +9,5 @@ include 'conexion/crud.php';
 
 if($method== 'GET'){
     echo listar_resumendash();
+    // echo ubicarresumen();
 }
