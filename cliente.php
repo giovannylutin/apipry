@@ -60,7 +60,10 @@ if($method == 'POST'){
            ,$q_nit,$q_direccionemp,$q_zona,$q_telefonoemp,$q_correoemp,
            $q_facturaemp,$q_fechaemicion,$q_quejaempresa,$q_requiereemp);
         }else{
-            header("HTTP/1.1 400 opcion incorrecta");
+            alta_queja($q_tipoqueja,$q_departamento,$q_municipio,$q_estado,
+            $q_nombre,$q_cui,$q_telefono,$q_celular,$q_correo,$q_direccion
+            ,$q_nit,$q_direccionemp,$q_zona,$q_telefonoemp,$q_correoemp,
+            $q_facturaemp,$q_fechaemicion,$q_quejaempresa,$q_requiereemp);
         }
 
         }else{
