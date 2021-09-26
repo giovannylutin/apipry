@@ -1,7 +1,41 @@
 <?php
 
 include 'conexion.php';
-	
+
+function listarreporteporempresa($valn){
+	header("HTTP/1.1 200 hay datos");
+	$collectionresumen=array( 'empregion'=> array(listarresumeRegion1($valn)),'empdep'=> array(listarresumeDepartamento1($valn)),'empmun'=> array(listarresumeMunicipio1($valn)));
+	return json_encode($collectionresumen);
+	exit;
+}
+function listarresumeRegion1($nitemp){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("SELECT COUNT(*) total,REGION, DEPARTAMENTO FROM tb_region join tb_departamento on tb_departamento.ID_REGION=tb_region.ID_REGION JOIN tb_quejas on tb_quejas.ID_DEP = tb_departamento.ID_DEP JOIN tb_quejas_proveedor on tb_quejas_proveedor.ID_QUEJA=tb_quejas.ID_QUEJA WHERE tb_quejas_proveedor.NIT= :id GROUP BY tb_region.ID_REGION");
+	$sql->bindValue(':id',$nitemp);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	return $sql->fetchAll();
+	exit;
+}
+function listarresumeDepartamento1($nitemp){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("SELECT COUNT(*) total,DEPARTAMENTO FROM tb_quejas join tb_departamento on tb_departamento.ID_DEP=tb_quejas.ID_DEP JOIN tb_quejas_proveedor on tb_quejas_proveedor.ID_QUEJA=tb_quejas.ID_QUEJA WHERE tb_quejas_proveedor.NIT= :id GROUP BY tb_quejas.ID_DEP");
+	$sql->bindValue(':id',$nitemp);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	return $sql->fetchAll();
+	exit;
+}
+function listarresumeMunicipio1($nitemp){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("SELECT COUNT(*) total,DEPARTAMENTO,MUNICIPIO FROM tb_departamento JOIN tb_municipio on tb_municipio.ID_DEP=tb_departamento.ID_DEP JOIN tb_quejas on tb_quejas.ID_MUN=tb_municipio.ID_MUN JOIN tb_quejas_proveedor on tb_quejas_proveedor.ID_QUEJA=tb_quejas.ID_QUEJA WHERE tb_quejas_proveedor.NIT= :id GROUP BY tb_quejas.ID_MUN");
+	$sql->bindValue(':id',$nitemp);
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	return $sql->fetchAll();
+	exit;
+}
+
 // $pdo = new Conexion();
 function listartdias(){
 	$pdo = new Conexion();
