@@ -3,6 +3,23 @@
 include 'conexion.php';
 	
 // $pdo = new Conexion();
+function listartdias(){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("CALL proc_resumensemana()");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	// $row = $pdo->query("SELECT *FROM resumensemana;")->fetch(PDO::FETCH_ASSOC);
+	return json_encode($sql->fetchAll());
+	exit;
+}
+function listar_totaltipo(){
+	$pdo = new Conexion();
+	$sql = $pdo->prepare("SELECT count(*) TOTALQ,TIPO FROM tb_quejas GROUP BY TIPO");
+	$sql->execute();
+	$sql->setFetchMode(PDO::FETCH_ASSOC);
+	return json_encode( $sql->fetchAll());
+	exit;
+}
 function listar_actualiza($var){
 	$pdo = new Conexion();
     $sql = $pdo->prepare("SELECT tb_quejas.ID_QUEJA,tb_departamento.DEPARTAMENTO,tb_municipio.MUNICIPIO,EMPRESA,ESTADO,TIPO,QUEJA_CONSULTA,tb_quejas.FECHA_ALTA,tb_quejas_proveedor.NIT,DIRECCION,ZONA FROM tb_quejas JOIN tb_municipio ON tb_quejas.ID_MUN=tb_municipio.ID_MUN JOIN tb_departamento on tb_departamento.ID_DEP=tb_quejas.ID_DEP join tb_quejas_detalle on tb_quejas_detalle.ID_QUEJA=tb_quejas.ID_QUEJA join tb_quejas_proveedor on tb_quejas.id_queja = tb_quejas_proveedor.id_queja JOIN tb_quejas_empresas ON tb_quejas_empresas.NIT=tb_quejas_proveedor.NIT WHERE QUEJA_CONSULTA=:id");

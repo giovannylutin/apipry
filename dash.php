@@ -8,6 +8,16 @@ $method = $_SERVER['REQUEST_METHOD'];
 include 'conexion/crud.php';
 
 if($method== 'GET'){
-    echo listar_resumendash();
-    // echo ubicarresumen();
+    if(isset($_GET['id'])){
+        $val=$_GET['id'];
+        if ($val==0) {
+            echo listar_totaltipo();
+        }else{
+            echo listartdias();
+        }
+    } 
+    else{
+        echo listar_resumendash();
+    }
 }
+    // 
